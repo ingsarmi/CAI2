@@ -1,332 +1,97 @@
-/* =========================================
-   SOLUCIÓN AL SCROLL (BLOQUEO DE PANTALLA)
-   ========================================= */
-
-html, body {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    /* Esto corta cualquier cosa que se salga de la pantalla */
-    overflow: hidden; 
-}
-
-
-/* =========================================
-   1. VARIABLES DE COLOR (TEMA ECO-TECH)
-   ========================================= */
+/* ==========================================================================
+   1. VARIABLES Y CONFIGURACIÓN GLOBAL
+   ========================================================================== */
 :root {
-    /* Paleta de colores: Verde Menta y Azul Eléctrico */
-    --primary-color: #00b894; 
-    --accent-color: #0984e3;
+    /* --- PALETA DE COLORES (TEMA TECH/LÓGICO) --- */
+    /* Puedes cambiar estos códigos por Naranjas si prefieres el tema anterior */
+    --primary-color: #00b894; /* Verde Neón (Principal) */
+    --accent-color: #0984e3;  /* Azul Eléctrico (Acento) */
     
-    /* Textos y Fondos */
-    --text-dark: #2d3436;
+    /* Colores de Texto */
     --text-light: #ffffff;
-    
-    /* Efecto Vidrio (Glassmorphism) */
-    --glass-bg: rgba(255, 255, 255, 0.75);
-    --glass-border: rgba(255, 255, 255, 0.5);
+    --text-dark: #1a2530;
 }
 
-/* =========================================
-   2. RESET Y CONFIGURACIÓN BASE
-   ========================================= */
+/* Reseteo básico para eliminar márgenes por defecto del navegador */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
+/* Configuración del cuerpo */
 body {
-    /* Fuente principal geométrica para títulos y botones */
+    /* Fuente principal geométrica (Títulos y textos generales) */
     font-family: 'Montserrat', sans-serif; 
-    overflow-x: hidden; /* Evita scroll horizontal indeseado */
+    
+    /* BLOQUEO DE SCROLL EN ESCRITORIO (Para que parezca una app) */
+    overflow: hidden; 
+    background-color: #000; /* Fondo negro de seguridad */
 }
 
-/* =========================================
-   3. CONTENEDOR PRINCIPAL (FONDO)
-   ========================================= */
+/* ==========================================================================
+   2. CONTENEDOR PRINCIPAL (HERO) - FLEXBOX PADRE
+   ========================================================================== */
 .hero-container {
+    /* Usamos Flexbox vertical para distribuir Título arriba y Botones abajo */
+    display: flex;
+    flex-direction: column; 
+    justify-content: flex-start; /* Todo empieza desde arriba */
+    
     position: relative;
     width: 100%;
-    height: 100vh;
+    height: 100vh; /* Ocupa exactamente el 100% de la altura de la ventana */
     
-    background-image: url('fondo-logica.jpg'); 
-    
-    background-size: cover; 
-
-    background-position: center bottom;
-    
+    /* --- FONDO --- */
+    background-image: url('img2.jpg'); 
+    background-size: cover;          /* Cubre todo el espacio */
+    background-position: center bottom; /* Ancla la imagen al suelo (protege al personaje) */
     background-repeat: no-repeat;
-    overflow: hidden; 
+    
+    padding: 2rem; /* Margen interno general */
+    overflow: hidden; /* Corta cualquier elemento que se salga */
 }
 
-/* Capa oscura (Overlay) para mejorar lectura del texto blanco */
+/* Capa oscura (Overlay) para que el texto blanco se lea bien sobre la imagen */
 .hero-container::before {
     content: '';
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    /* Degradado sutil de negro a azul oscuro */
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), rgba(0, 20, 40, 0.1));
-    z-index: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 20, 40, 0.2));
+    z-index: 0; /* Se queda al fondo */
 }
 
-/* =========================================
-   4. MARCA / TÍTULO (ESQUINA SUPERIOR IZQ)
-   ========================================= */
-.top-left-branding {
-    position: absolute;
-    top: 40px;
-    left: 50px;
-    z-index: 20; /* Por encima de todo */
-    text-align: left;
-}
-
-.top-left-branding h1 {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-}
-
-.brand-cai {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 5rem;
-    font-weight: 900; /* Extra Grueso */
-    line-height: 0.9;
-    letter-spacing: -3px; /* Letras muy pegadas (Estilo Tech) */
-    
-    /* Degradado en el texto */
-    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    
-    /* Sombra para separar del fondo */
-    filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));
-}
-
-.brand-subtitle {
-    font-family: 'Roboto Mono', monospace; /* Fuente tipo código */
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--text-light);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    
-    /* Línea verde decorativa abajo */
-    border-bottom: 3px solid var(--primary-color);
-    padding-bottom: 5px;
-    margin-top: 5px;
-    
-    text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-}
-
-/* =========================================
-   5. ESTRUCTURA DE LA INTERFAZ (GRILLA)
-   ========================================= */
-.interface-grid {
-    position: relative;
-    z-index: 10;
-    display: grid;
-    grid-template-columns: 1fr 1.6fr 1fr;
-    height: calc(100vh - 150px); 
-    
-    align-items: center; 
-    
-    width: 100%;
-    max-width: 1600px;
-    margin: 0 auto;
-    
-    margin-top: 180px; 
-}
-.button-group {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem; /* Espacio entre botones */
-}
-
-/* El espaciador invisible del centro */
-.spacer { 
-    pointer-events: none; 
-}
-
-/* =========================================
-   6. ESTILOS DE LOS BOTONES
-   ========================================= */
-.cai-btn {
-    position: relative;
-    /* Fondo oscuro tecnológico (Azul muy oscuro casi negro) */
-    background: rgba(10, 20, 30, 0.85); 
-    
-    /* Borde sutil */
-    border: 1px solid rgba(0, 184, 148, 0.3); /* Verde tenue */
-    
-    /* BORDE IZQUIERDO NEÓN GRUESO */
-    border-left: 4px solid var(--primary-color); 
-    
-    /* CORTAR LA ESQUINA (Efecto Sci-Fi) 
-       Esto corta la esquina superior derecha e inferior izquierda */
-    clip-path: polygon(
-        0 0, 
-        95% 0, 
-        100% 20%, 
-        100% 100%, 
-        5% 100%, 
-        0 80%
-    );
-
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    gap: 15px;
-    
-    padding: 1.1rem 1.5rem;
-    
-    /* Tipografía TÉCNICA (Monoespaciada) */
-    font-family: 'Roboto Mono', monospace; 
-    font-size: 0.95rem; /* Un poco más pequeño para parecer "data" */
-    font-weight: 700;
-    color: #fff; /* Texto blanco */
-    text-transform: uppercase; /* Mayúsculas para autoridad */
-    letter-spacing: 1px;
-    
-    cursor: pointer;
-    transition: all 0.2s ease;
-    
-    /* El box-shadow normal no funciona con clip-path, 
-       usamos drop-shadow en el filter */
-    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
-    
-    width: 100%;
-    text-align: left;
-    overflow: hidden; /* Para efectos internos */
-}
-
-/* El Icono */
-.cai-btn i {
-    font-size: 1.1rem;
-    color: var(--primary-color); /* Verde neón */
-    text-shadow: 0 0 5px var(--primary-color); /* Pequeño resplandor */
-    transition: all 0.3s;
-}
-
-/* Elemento decorativo: Una línea fina que cruza al hacer hover */
-.cai-btn::before {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(
-        90deg, 
-        transparent, 
-        rgba(0, 184, 148, 0.2), 
-        transparent
-    );
-    transition: left 0.5s;
-    z-index: 0;
-}
-
-.cai-btn:hover {
-    background: rgba(10, 20, 30, 0.95);
-    border-color: var(--accent-color); /* Cambia borde a azul */
-    border-left-color: var(--accent-color);
-    padding-left: 2rem; /* Pequeño desplazamiento mecánico a la derecha */
-    color: var(--primary-color);
-}
-
-.cai-btn:hover::before {
-    left: 100%; /* La luz pasa rápido por el botón */
-}
-
-.cai-btn:hover i {
-    color: #fff;
-    transform: rotateY(180deg); /* Giro técnico 3D */
-}
-
-/* =========================================
-   7. CONTENEDOR DE PARTÍCULAS
-   ========================================= */
-#particles-container {
-    position: absolute;
-    top: 0; left: 0; width: 100%; height: 100%;
-    overflow: hidden;
-    z-index: 1;
-    pointer-events: none;
-}
-
-.particle {
-    position: absolute;
-    bottom: -50px;
-    background-color: #fff;
-    border-radius: 50%;
-    /* Glow tecnológico */
-    box-shadow: 0 0 10px var(--primary-color), 0 0 20px var(--accent-color);
-    filter: blur(1px); /* Efecto Bokeh suave */
-    animation-name: floatUp;
-    animation-timing-function: linear;
-    animation-iteration-count: infinite;
-}
-
-@keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 0; }
-    20% { opacity: 0.8; }
-    80% { opacity: 0.8; }
-    100% { transform: translateY(-120vh) scale(0.5); opacity: 0; }
-}
-
-/* =========================================
-   8. RESPONSIVE (MÓVILES Y TABLETS)
-   ========================================= */
-@media (max-width: 1024px) {
-    .brand-cai { font-size: 4rem; }
-    /* Reducimos espacio central en tablets */
-    .interface-grid { grid-template-columns: 1fr 1fr 1fr; }
-}
-
-@media (max-width: 900px) {
-    .hero-container {
-        padding: 1rem;
-    }
-
-    
-    .brand-cai { font-size: 3.5rem; letter-spacing: -1px; }
-    
-    /* Reajuste de la Grilla a 1 sola columna */
-    .interface-grid {
-        grid-template-columns: 1fr;
-        gap: 1rem;
-        margin-top: 10px;
-        padding-bottom: 50px;
-    }
-    
-    .spacer { display: none; }
-    
-    .button-group { 
-        width: 100%; 
-        max-width: 400px; 
-        margin: 0 auto; 
-    }
-}
-
-
+/* ==========================================================================
+   3. TÍTULO / MARCA (CORREGIDO: SIN POSITION ABSOLUTE)
+   ========================================================================== */
+   /* ==========================================================================
+   3. TÍTULO / MARCA (ESTILO MÓDULO DE DATOS - CORREGIDO)
+   ========================================================================== */
 
 .logical-branding-left {
-    position: absolute;
-    top: 40px;
-    left: 50px;
+    /* IMPORTANTE: Usamos relative para que ocupe espacio y empuje los botones */
+    position: relative; 
     z-index: 20;
+    
+    /* Márgenes para ubicarlo */
+    margin-top: 40px; 
+    margin-left: 50px;
+    margin-bottom: 30px; /* Empuja la grilla hacia abajo */
+    
+    /* ANCHO AUTO: Para que la caja se ajuste al contenido y no ocupe todo el ancho */
+    width: fit-content; 
     
     /* Diseño de contenedor tipo "Caja Negra" tecnológica */
     display: flex;
     align-items: center;
-    gap: 20px; /* Espacio entre el visualizador y el texto */
+    gap: 20px; 
     
     background: rgba(5, 15, 25, 0.85); /* Fondo oscuro semitransparente */
     backdrop-filter: blur(10px);
     padding: 1.2rem 2rem;
     
     /* Borde técnico: solo izquierda grueso y abajo delgado */
-    border-left: 5px solid var(--primary-color); /* Verde neón */
+    border-left: 5px solid var(--primary-color); 
     border-bottom: 2px solid rgba(0, 184, 148, 0.3);
     
     /* Corte en la esquina inferior derecha para look Sci-Fi */
@@ -340,7 +105,7 @@ body {
     display: flex;
     gap: 5px;
     height: 60px;
-    align-items: flex-end; /* Se animan desde abajo hacia arriba */
+    align-items: flex-end; 
 }
 
 .bar {
@@ -350,7 +115,7 @@ body {
     animation: data-fluctuation 1.5s infinite ease-in-out alternate;
 }
 
-/* Animamos la altura de cada barra con diferentes retrasos */
+/* Animamos la altura de cada barra */
 .b1 { height: 60%; animation-delay: 0.2s; }
 .b2 { height: 100%; animation-delay: 0.5s; }
 .b3 { height: 40%; animation-delay: 0.8s; }
@@ -359,7 +124,6 @@ body {
     0% { height: 30%; opacity: 0.5; }
     100% { height: 100%; opacity: 1; }
 }
-
 
 /* --- 2. Textos del Módulo --- */
 .brand-text-container {
@@ -370,11 +134,11 @@ body {
 
 .logical-cai {
     font-family: 'Montserrat', sans-serif;
-    font-size: 4rem; /* Un poco más compacto que el anterior */
+    font-size: 4rem; 
     font-weight: 900;
     line-height: 0.8;
     letter-spacing: -2px;
-    color: #ffffff; /* Blanco puro y sólido para máxima precisión */
+    color: #ffffff; /* Blanco sólido para precisión */
     text-transform: uppercase;
     margin-bottom: 5px;
 }
@@ -402,24 +166,248 @@ body {
 }
 
 .logical-subtitle {
-    font-family: 'Roboto Mono', monospace; /* Fuente técnica */
+    font-family: 'Roboto Mono', monospace; 
     font-size: 0.95rem;
     font-weight: 700;
-    color: var(--primary-color); /* Texto verde neón */
+    color: var(--primary-color); 
     text-transform: uppercase;
     letter-spacing: 1px;
 }
 
-/* Ajuste Mobile */
+/* --- AJUSTE RESPONSIVE PARA EL HEADER --- */
 @media (max-width: 900px) {
     .logical-branding-left {
-        left: 50%;
-        transform: translateX(-50%); /* Centrado en móvil */
-        padding: 1rem;
-        width: 90%;
+        margin: 20px auto; /* Centrado en móvil */
+        margin-left: auto; /* Reset del margen izquierdo */
+        width: 90%; /* Ocupa casi todo el ancho en celular */
         justify-content: center;
     }
     .logical-cai { font-size: 3rem; }
-    .data-visualizer { height: 40px; }
-    .bar { width: 6px; }
+}
+.top-left-branding {
+    position: relative; /* IMPORTANTE: Ocupa espacio real, empuja lo de abajo */
+    z-index: 20;
+    
+    /* Espaciado */
+    width: 100%;
+    padding-top: 20px; 
+    padding-left: 30px;
+    margin-bottom: 20px; /* Un poco de aire antes de que empiecen los botones */
+    
+    text-align: left;
+}
+
+/* Estilo de la palabra gigante "CAI" */
+.brand-cai {
+    display: block; /* Ocupa su propia línea */
+    font-family: 'Montserrat', sans-serif;
+    font-size: 7rem; /* Grande e impactante */
+    font-weight: 900; /* Extra grueso */
+    line-height: 0.9;
+    letter-spacing: -3px; /* Letras pegadas estilo moderno */
+    
+    /* Efecto de degradado en el texto */
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* Sombra para despegarlo del fondo */
+    filter: drop-shadow(0 4px 15px rgba(0,0,0,0.5));
+}
+
+/* Estilo del subtítulo "RAZONAMIENTO LÓGICO" */
+.brand-subtitle {
+    display: inline-block;
+    font-family: 'Roboto Mono', monospace; /* Fuente tipo código/técnica */
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    
+    /* Línea decorativa debajo */
+    border-bottom: 3px solid var(--primary-color);
+    padding-bottom: 5px;
+    margin-top: 10px;
+    
+    text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+}
+
+/* ==========================================================================
+   4. GRILLA DE INTERFAZ (BOTONES)
+   ========================================================================== */
+.interface-grid {
+    position: relative;
+    z-index: 10;
+    
+    /* Hacemos que la grilla llene el espacio restante automáticamente */
+    flex-grow: 1; 
+    
+    display: grid;
+    /* 3 Columnas: Botones Izq | Espacio Personaje | Botones Der */
+    grid-template-columns: 1fr 1.5fr 1fr; 
+    
+    align-items: center; /* Centra los botones verticalmente en el espacio disponible */
+    width: 100%;
+    max-width: 1600px;
+    margin: 0 auto;
+    
+    padding-bottom: 40px; /* Para que no queden pegados al suelo */
+}
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Espacio entre cada botón */
+}
+
+/* Elemento invisible del centro para dejar ver al personaje */
+.spacer {
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   5. ESTILO DE BOTONES (TECH HUD - FUTURISTA)
+   ========================================================================== */
+.cai-btn {
+    position: relative;
+    
+    /* Fondo oscuro tecnológico */
+    background: rgba(10, 20, 30, 0.85); 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    
+    /* Borde lateral de neón */
+    border-left: 4px solid var(--primary-color);
+    
+    /* Recorte de esquinas (Estilo Sci-Fi) */
+    clip-path: polygon(0 0, 95% 0, 100% 20%, 100% 100%, 5% 100%, 0 80%);
+    
+    /* Tipografía Técnica */
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    
+    /* Layout interno */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 1.1rem 1.5rem;
+    width: 100%;
+    text-align: left;
+    
+    cursor: pointer;
+    transition: all 0.3s ease;
+    
+    /* Sombra proyectada */
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+}
+
+/* Iconos dentro del botón */
+.cai-btn i {
+    font-size: 1.2rem;
+    color: var(--primary-color);
+    text-shadow: 0 0 5px var(--primary-color); /* Resplandor del icono */
+    transition: transform 0.3s;
+}
+
+/* --- Efectos Hover (Al pasar el mouse) --- */
+.cai-btn:hover {
+    background: rgba(20, 40, 60, 0.95); /* Se aclara un poco */
+    border-left-color: var(--accent-color); /* Cambia de color (Verde a Azul) */
+    padding-left: 2rem; /* Pequeño movimiento mecánico a la derecha */
+    color: var(--primary-color);
+}
+
+.cai-btn:hover i {
+    color: #fff;
+    transform: rotateY(180deg); /* Giro 3D del icono */
+}
+
+/* ==========================================================================
+   6. PARTÍCULAS (FONDO ANIMADO)
+   ========================================================================== */
+#particles-container {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    overflow: hidden;
+    z-index: 1; 
+    pointer-events: none;
+}
+
+.particle {
+    position: absolute;
+    bottom: -50px;
+    
+    /* CAMBIO: Ya no son bolitas, son texto */
+    color: var(--primary-color); /* Verde tecnológico */
+    font-family: 'Roboto Mono', monospace; /* Fuente de código */
+    font-weight: 700;
+    
+    /* Glow de texto para que parezca pantalla */
+    text-shadow: 0 0 5px var(--primary-color), 0 0 10px var(--accent-color);
+    
+    user-select: none; /* Para que no se puedan seleccionar */
+    
+    animation-name: floatUpData;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+}
+
+@keyframes floatUpData {
+    0% { transform: translateY(0); opacity: 0; }
+    10% { opacity: 0.8; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-120vh); opacity: 0; }
+}
+
+/* ==========================================================================
+   7. RESPONSIVE (MÓVILES Y TABLETS)
+   ========================================================================== */
+@media (max-width: 900px) {
+    
+    /* 1. Habilitamos Scroll en celular (porque los elementos no caben) */
+    html, body {
+        overflow-y: auto !important; 
+        height: auto !important;
+        background-color: #0d1b2a; /* Fondo oscuro por si la imagen se acaba */
+    }
+
+    .hero-container {
+        height: auto !important;
+        min-height: 100vh;
+        overflow: visible !important;
+        padding: 1rem;
+        padding-bottom: 60px; /* Espacio final para scroll */
+    }
+
+    /* 2. Ajustamos el Título */
+    .top-left-branding {
+        padding-left: 0;
+        text-align: center; /* Centrado en móvil */
+        margin-bottom: 40px;
+    }
+    
+    .brand-cai { font-size: 4.5rem; }
+    .brand-subtitle { font-size: 1rem; }
+
+    /* 3. Ajustamos la Grilla (De 3 columnas a 1 sola) */
+    .interface-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding-bottom: 0;
+    }
+
+    /* Ocultamos el hueco del personaje */
+    .spacer { display: none; }
+
+    /* Ajustamos ancho de botones */
+    .button-group {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
+    }
 }
